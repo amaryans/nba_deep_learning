@@ -25,33 +25,13 @@ seq_data = pd.read_csv(seq_data_path)
 
 # Merging the data here based on game clock x y and z, there could be duplicates of the shots in different games,
 # but the odds of that are so low based on the accuracy of the positional data, again need to drop duplicates just in case
+# Only doing z data here now in order to keep more shot data when doing all of x y and z it would drop a lot of shots
 merged = moment_data.merge(seq_data, on=['game_clock', 'z'], how="inner")
 merged = merged.drop_duplicates()
 print(merged)
 shot_start = merged.loc[merged['rankc'] == 1]
-print(merged)
+print(shot_start)
 
 
-# Start of very hacky way of finding the first data point of the shot in the moment data
-x_pos = merged['z']
-rows = []
-df = pd.DataFrame()
-#print(x_pos.values)
-for val in x_pos.values:
-    # This gets all of the rows which they share?
-    #df = df.append(moment_data.loc[moment_data['x'] == val])
-    rows.append(seq_data.loc[seq_data['z'] == val])
 
-#print(df)
-#print(rows)
-#print(len(rows['x'].values))
-#print(type(rows))
-df = pd.DataFrame()
-
-for x in rows:
-    #print(x['x'].values)
-    #if x['rankc'].values[0] == 1:
-    df = df.append(moment_data.loc[moment_data['x'] == x['x'].values[0]])
-    
-print(df)
 #merged.to_csv("merged_data.csv", mode='a')
