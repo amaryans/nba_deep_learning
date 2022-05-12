@@ -37,13 +37,11 @@ for val in shot_start['game_clock']:
     if isinstance(index, int):
         conv_input = conv_input.append(moment_data.iloc[index-60:index])
     else:
+        # Fix for there being multiple game_clock values which are the same. Since we are merging based on game clock and z value
+        # then only taking from rank = 1 then we can assume that this will give us all of the shots in merged data
         for i in range(len(index)):
             if index[i] == True:
-                #print(i)
-                #print(moment_data['z'].iloc[i])
-                #print(shot_start['z'].loc[shot_start['game_clock'] == val])
                 if moment_data['z'].iloc[i] == shot_start['z'].loc[shot_start['game_clock'] == val].values[0]:
-                    print("holy shit")
                     conv_input = conv_input.append(moment_data.iloc[i-60:i])
             else:
                 pass
