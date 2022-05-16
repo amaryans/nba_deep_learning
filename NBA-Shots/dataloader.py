@@ -54,7 +54,7 @@ class DataLoad():
 
 
 
-  def munge_data(self, height = 11.0, seq_len = 10.0, dist = 3.0,verbose = True):
+  def munge_data(self, height = 11.0, seq_len = 10.0, dist = 3.0,verbose = False):
     """Function to munge the data
     NOTE: this implementation assumes that the time is ticking down
     input:
@@ -87,7 +87,7 @@ class DataLoad():
     N,D = df_arr.shape
     for i in range(1,N,1):
       if verbose and i%1000 == 0: print('At line %5.0f of %5.0f'%(i,N))
-      if int(df_arr[i,2]) == 1:
+      if int(df_arr[i,7]) == 1:
         end_ind = i  #Note this represent the final index + 1
         #Now we have the start index and end index
         seq = df_arr[start_ind:end_ind,3:7]
