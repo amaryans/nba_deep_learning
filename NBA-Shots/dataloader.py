@@ -91,24 +91,24 @@ class DataLoad():
       if int(df_arr[i,40]) == 1:
         end_ind = i  #Note this represent the final index + 1
         #Now we have the start index and end index
-        seq = df_arr[start_ind:end_ind,3:7]
-        tmp = np.array(seq[:,:3]-self.center, dtype=np.float64)
+        seq = df_arr[start_ind:end_ind,1:5]
+        tmp = np.array(seq[:,1:4]-self.center, dtype=np.float64)
         dist_xyz = np.linalg.norm(tmp,axis=1)
         #dist_xyz = np.linalg.norm(seq[:,:3]-self.center,axis=1)
-        ind_crit = np.logical_and((seq[:,2]>height), (dist_xyz > dist))  #Indices satisfying oru criteria
+        ind_crit = np.logical_and((seq[:,3]>height), (dist_xyz > dist))  #Indices satisfying oru criteria
         if np.sum(ind_crit) == 0: continue  #No sequence satisfies the criteria for this i
         li,i = return_large_true(ind_crit)
         seq = seq[i:i+li,:]    #Excludes rows where z coordinate is lower than "height"
         #print(seq[:,3])
         try:
-            seq[:,3] = seq[:,3] - np.min(seq[:,3])   #    NOTE: this implementation assumes that the time is ticking down
+            seq[:,0] = seq[:,0] - np.min(seq[:,0])   #    NOTE: this implementation assumes that the time is ticking down
         except:
             pass
             #print('A sequence didnt match criteria')
         if seq.shape[0] >= seq_len:
           #print("appending")
           self.data3.append(seq[-seq_len:])   #Add the current sequence to the list
-          self.labels.append(df_arr[start_ind,2])
+          self.labels.append(df_arr[start_ind,37])
         else:
           self.omit += 1
         start_ind = end_ind
@@ -138,7 +138,7 @@ class DataLoad():
   def center_data(self,center_cent = np.array([5.25, 25.0, 10.0])):
     assert not isinstance(self.data3, list), 'First munge the data before centering'
     assert isinstance(center_cent, np.ndarray), 'Please provide the center as a numpy array'
-    self.data3[:,:,:3] = self.data3[:,:,:3] - center_cent
+    self.data3[:,:,1:4] = self.data3[:,:,1:4] - center_cent
     self.center -= center_cent
     print('New center',self.center)
     return

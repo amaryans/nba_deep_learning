@@ -73,6 +73,7 @@ y_train = data_dict['y_train']
 X_val_1 = np.transpose(data_dict['X_val'],[0,2,1])
 y_val = data_dict['y_val']
 
+print(X_train_1)
 # The four coordinates of the shape are x, y, z, and time to the shot.
 N,crd,_ = X_train_1.shape
 print(N,crd,_)
