@@ -107,7 +107,7 @@ class DataLoad():
         if seq.shape[0] >= seq_len:
           #print("appending")
           self.data3.append(seq[-seq_len:])   #Add the current sequence to the list
-          self.labels.append(df_arr[start_ind,4])
+          self.labels.append(df_arr[start_ind,2])
         else:
           self.omit += 1
         start_ind = end_ind
