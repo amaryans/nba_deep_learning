@@ -58,7 +58,7 @@ center = np.array([5.25, 25.0, 10.0])   #Center of the basket for the dataset
 dl = DataLoad(direc,csv_file,center)
 
 #Munge the data. Arguments see the class
-dl.munge_data(11,sl,db, False)
+dl.munge_data(11,sl,db, True)
 
 #Center the data
 dl.center_data(center)
