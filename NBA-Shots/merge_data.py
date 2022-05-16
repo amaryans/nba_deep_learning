@@ -6,7 +6,7 @@ import numpy as np
 from Game import Game
 
 
-moment_data_path = '/Users/amaryans/Documents/school/spring22/cosc424/projects/NBA-Player-Movements/moment_data.csv'
+moment_data_path = '/Users/amaryans/Documents/school/spring22/cosc424/projects/final_project/nba_deep_learning/NBA-Shots/merged_shot_data.csv'
 seq_data_path = '/Users/amaryans/Documents/school/spring22/cosc424/projects/try2/RNN_basketball/data/seq_all.csv'
 
 # Long winded way of finding when the first datapoint of the shot
@@ -15,13 +15,18 @@ seq_data_path = '/Users/amaryans/Documents/school/spring22/cosc424/projects/try2
 # moment data is the description of the live game data with player data as well as ball data
 # Drop duplicates because for some reason some data points are duplicated which slows down searches
 # seq_data is the data of the 3 point shots with the x,y,z of the ball data and the outcome
-moment_data = pd.read_csv(moment_data_path, index_col = 0)
+moment_data = pd.read_csv(moment_data_path)
 moment_data = moment_data.drop_duplicates()
 seq_data = pd.read_csv(seq_data_path)
 
 # Merging the data here based on game clock x y and z, there could be duplicates of the shots in different games,
 # but the odds of that are so low based on the accuracy of the positional data, again need to drop duplicates just in case
 # Only doing z data here now in order to keep more shot data when doing all of x y and z it would drop a lot of shots
+seq_data['game_clock'] = seq_data['game_clock'].astype(str)
+seq_data['z'] = seq_data['z'].astype(str)
+#moment_data['game_clock'] = moment_data['game_clock'].astype(float)
+#moment_data['z'] = moment_data['z'].astype(float)
+
 merged = moment_data.merge(seq_data, on=['game_clock', 'z'], how="inner")
 merged = merged.drop_duplicates()
 print(merged)

@@ -70,13 +70,16 @@ class DataLoad():
     height = float(height)
 
     ##Import data
-    df = pd.read_csv(self.csv_loc).sort_values(by=['id','game_clock'], ascending=[1,0])
+    df = pd.read_csv(self.csv_loc, index_col=0)
     if verbose:
       print('The shape of the read data is ',df.shape)
       ##To plot a single shot
       test = df[df['id'] == "0021500001_105"]
       test.head(10)
 
+    
+    for col in df.columns:
+      df[col] = df[col].astype(float)
     #Check is the datafram has the columns we want
     if not 'x' and 'y' and 'z' and 'game_clock' and 'rankc' in df.columns: print('We miss columns in the dataframe')
 
@@ -87,7 +90,7 @@ class DataLoad():
     N,D = df_arr.shape
     for i in range(1,N,1):
       if verbose and i%1000 == 0: print('At line %5.0f of %5.0f'%(i,N))
-      if int(df_arr[i,7]) == 1:
+      if int(df_arr[i,38]) == 1:
         end_ind = i  #Note this represent the final index + 1
         #Now we have the start index and end index
         seq = df_arr[start_ind:end_ind,3:7]

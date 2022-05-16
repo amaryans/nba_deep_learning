@@ -14,6 +14,7 @@ import multiprocessing as MP
 from multiprocessing import Pool
 from multiprocessing import Process
 import tqdm
+from PIL import Image
 
 def get_img_data(file):
     try:
@@ -21,10 +22,12 @@ def get_img_data(file):
     except:
         print("file: " +str(file) + " messed up")
     return img_arr
+
+
 ### All of this is from old code. The bigges change will be in "model.py" as it is how the model is built
 
 #The folder where your dataset is. Note that is must end with a '/'
-direc = 'data/'
+direc = './'
 
 plot = False                     #Set True if you wish plots and visualizations
 
@@ -49,14 +52,13 @@ db = 5                           #distance to basket to stop trajectories
 
 """Load the data"""
 #The name of the dataset. Note that it must end with '.csv'
-csv_file = 'seq_all.csv'
+csv_file = 'merged_shot_data.csv'
 #Load an instance
 center = np.array([5.25, 25.0, 10.0])   #Center of the basket for the dataset
 dl = DataLoad(direc,csv_file,center)
 
 #Munge the data. Arguments see the class
 dl.munge_data(11,sl,db, False)
-
 
 #Center the data
 dl.center_data(center)
@@ -78,11 +80,13 @@ Nval = X_val_1.shape[0]
 
 config['crd'] = crd            #Number of coordinates. usually three (X,Y,Z) and time (game_clock)
 
+
 ### Importing all of the images to make training data ###
 img = load_img("test.png")
 img_array = img_to_array(img)
 print(img_array.shape)
 
+x_train = np.array([list(Image.open(f'/moment_images/temp_images/{val}').getdata()) for val in os.listdir('/Users/amaryans/Documents/school/spring22/cosc424/projects/final_project/nba_deep_learning/NBA-Shots/moment_images/temp_data')])
 import_training_results = np.array([get_img_data(val) for val in os.listdir('/Users/amaryans/Documents/school/spring22/cosc424/projects/final_project/nba_deep_learning/NBA-Shots/moment_images')])
 
 
@@ -93,10 +97,10 @@ cnn_input = layers.Input(shape = img_array.shape)
 cnn = layers.Conv2D(20, kernel_size=(5, 5), activation = 'relu')(cnn_input)
 cnn = layers.Conv2D(5, kernel_size = (5, 5), padding = 'valid')(cnn)
 cnn = layers.Flatten()(cnn)
-cnn = layers.Dense(crd* sl)(cnn)
+cnn = layers.Dense(crd * sl)(cnn)
 cnn = layers.Reshape((crd, sl))(cnn)
 #rnn_input = layers.Concatenate()([cnn, rnn_input])
-rnn = layers.Conv1D(12, 1, padding = 'same')(rnn_input)
+rnn = layers.Conv1D(sl, 1, padding = 'same')(rnn_input)
 rnn = layers.Concatenate()([cnn, rnn])
 rnn = layers.LSTM(10)(rnn)
 rnn = layers.Dense(10)(rnn)
