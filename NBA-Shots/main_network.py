@@ -1,12 +1,26 @@
 ### Main Neural Network For the 3 point shot predictor
 
+from email.mime import image
+from webbrowser import get
 import numpy as np
 import pandas as pd
 from tensorflow import keras
 from tensorflow.keras import layers
 import matplotlib.pyplot as plt
 from dataloader import *
+from keras.preprocessing.image import load_img, img_to_array
+import os
+import multiprocessing as MP
+from multiprocessing import Pool
+from multiprocessing import Process
+import tqdm
 
+def get_img_data(file):
+    try:
+        img_arr = img_to_array(load_img("./moment_images/" + str(file), color_mode = 'rgb'))
+    except:
+        print("file: " +str(file) + " messed up")
+    return img_arr
 ### All of this is from old code. The bigges change will be in "model.py" as it is how the model is built
 
 #The folder where your dataset is. Note that is must end with a '/'
@@ -52,23 +66,30 @@ plot = 0
 if plot:
   dl.plot_traj_2d(20,'at %.0f feet from basket'%db)
 
-X_train = np.transpose(data_dict['X_train'],[0,2,1])
+X_train_1 = np.transpose(data_dict['X_train'],[0,2,1])
 y_train = data_dict['y_train']
-X_val = np.transpose(data_dict['X_val'],[0,2,1])
+X_val_1 = np.transpose(data_dict['X_val'],[0,2,1])
 y_val = data_dict['y_val']
 
 # The four coordinates of the shape are x, y, z, and time to the shot.
-N,crd,_ = X_train.shape
+N,crd,_ = X_train_1.shape
 print(N,crd,_)
-Nval = X_val.shape[0]
+Nval = X_val_1.shape[0]
 
 config['crd'] = crd            #Number of coordinates. usually three (X,Y,Z) and time (game_clock)
+
+### Importing all of the images to make training data ###
+img = load_img("test.png")
+img_array = img_to_array(img)
+print(img_array.shape)
+
+import_training_results = np.array([get_img_data(val) for val in os.listdir('/Users/amaryans/Documents/school/spring22/cosc424/projects/final_project/nba_deep_learning/NBA-Shots/moment_images')])
 
 
 
 # Batch size is number of samples (e.g. number of shots), crd is the number of features, sl is the number of time steps
 rnn_input = layers.Input(shape = (crd, sl))
-cnn_input = layers.Input(shape = (50, 94, 3))
+cnn_input = layers.Input(shape = img_array.shape)
 cnn = layers.Conv2D(20, kernel_size=(5, 5), activation = 'relu')(cnn_input)
 cnn = layers.Conv2D(5, kernel_size = (5, 5), padding = 'valid')(cnn)
 cnn = layers.Flatten()(cnn)
