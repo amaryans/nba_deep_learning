@@ -3,8 +3,7 @@
 import csv
 import pandas as pd
 import numpy as np
-
-
+from Game import Game
 
 
 moment_data_path = '/Users/amaryans/Documents/school/spring22/cosc424/projects/NBA-Player-Movements/moment_data.csv'
